@@ -1,1 +1,1 @@
-Worker: java -jar src/Main/Linux3000/DiscordBot.java
+Worker: java -jar target/DiscordBot2.0-1.0-SNAPSHOT.jar
