@@ -50,6 +50,21 @@
                         </execution>
                     </executions>
                 </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- give full qualified name of your main class-->
+                            <mainClass>main.Linux3000.DiscordBot</mainClass>
+
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
 
 
             <plugin>
