@@ -1,9 +1,8 @@
 package main.Linux3000.manage;
 
-import com.sun.xml.internal.ws.addressing.WsaActionUtil;
 
 import java.sql.*;
-import java.util.OptionalLong;
+
 
 public class SQLManager {
 
