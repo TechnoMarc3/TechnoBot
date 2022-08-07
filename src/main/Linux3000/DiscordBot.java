@@ -69,7 +69,7 @@ public class DiscordBot {
         }
 
 
-        JDABuilder builder = JDABuilder.createDefault(System.getenv("TOKEN");
+        JDABuilder builder = JDABuilder.createDefault(System.getenv("TOKEN"));
         this.creator = new ImageCreator();
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES);
         builder.addEventListeners(new MessageReceivedListener());
