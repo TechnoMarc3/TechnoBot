@@ -70,11 +70,9 @@ public class TrackScheduler extends AudioEventAdapter {
                 return true;
             }else {
                 Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(this.audioPlayer);
-                AudioManager manager = guild.getAudioManager();
                 clearPlaylist();
                 this.audioPlayer.stopTrack();
-                manager.closeAudioConnection();
-                DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
+                DiscordBot.INSTANCE.playerManager.getMusicManager(guild).setOnCooldown(true);
                 return false;
             }
         }else {
@@ -230,7 +228,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 }
                 else {
 
-                    DiscordBot.INSTANCE.playerManager.getMusicManager(guild).changeCooldown();
+                    DiscordBot.INSTANCE.playerManager.getMusicManager(guild).setOnCooldown(true);
                 }
             }
 

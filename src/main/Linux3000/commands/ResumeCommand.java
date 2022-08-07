@@ -20,9 +20,11 @@ public class ResumeCommand implements ServerCommand {
 						.getMusicManager(channel.getGuild());
 
 				if (musicManager.scheduler.getAudioPlayer().isPaused()) {
+					musicManager.setOnCooldown(false);
 					musicManager.scheduler.getAudioPlayer().setPaused(false);
+
 					channel.sendMessage("Ich spiele nun weiter Musik für dich ab! :thumbsup:").queue();
-					DiscordBot.INSTANCE.playerManager.getMusicManager(channel.getGuild()).changeCooldown();
+
 				} else {
 					channel.sendMessage("Ich bin nicht pausiert!").queue();
 				}

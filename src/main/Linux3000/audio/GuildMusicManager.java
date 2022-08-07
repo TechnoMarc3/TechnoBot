@@ -15,6 +15,7 @@ public class GuildMusicManager {
 
 	 private boolean cooldown = false;
 	 TimerTask task;
+	 Thread thread;
 
 
 	    public final TrackScheduler scheduler;
@@ -37,32 +38,42 @@ public class GuildMusicManager {
 		return playlist;
 	}
 
-	public void changeCooldown() {
-			cooldown = !cooldown;
+	public TrackScheduler getScheduler() {
+		return scheduler;
+	}
+
+	public void setOnCooldown(boolean cooldown) {
 		System.out.println("changed cooldown to: " + cooldown);
 			if(cooldown) {
 				doLoop();
 			}
 			if(!cooldown) {
+				thread.stop();
 				task.cancel();
 			}
 	}
 
 	private void doLoop() {
-		Timer timer = new Timer();
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(audioPlayer);
-				TextChannel channel = DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(guild);
-				AudioManager manager = guild.getAudioManager();
-				manager.closeAudioConnection();
-				channel.sendMessage("Die letzen 5 Minuten wurde keine Musik abgespielt. Deshalb habe ich mich disconnected! Du kannst mich aber wieder zurückholen, indem du !play <Titel, URL> eingibst ").queue();
-				System.out.println("disconnected due inactivity : " + guild.getName());
-				DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
-			}
-		};
-		timer.schedule(task, 300000);
+			thread = new Thread(() -> {
+				Timer timer = new Timer();
+				task = new TimerTask() {
+					@Override
+					public void run() {
+						Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(audioPlayer);
+						TextChannel channel = DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(guild);
+						AudioManager manager = guild.getAudioManager();
+						getScheduler().getAudioPlayer().stopTrack();
+						getScheduler().clearPlaylist();
+						manager.closeAudioConnection();
+						channel.sendMessage("Die letzen 5 Minuten wurde keine Musik abgespielt. Deshalb habe ich mich disconnected! Du kannst mich aber wieder zurückholen, indem du !play <Titel, URL> eingibst ").queue();
+						System.out.println("disconnected due inactivity : " + guild.getName());
+						DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
+					}
+				};
+				timer.schedule(task, 10000);
+			});
+			thread.start();
+
 	}
 
 	public AudioPlayerSendHandler getSendHandler() {

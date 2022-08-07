@@ -40,6 +40,9 @@ public class PlayerManager {
 
             guild.getAudioManager().setSendingHandler(guildMusicManager.getSendHandler());
 
+            DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
+            DiscordBot.INSTANCE.getManagerController().addEntry(guild, guildMusicManager);
+
             return guildMusicManager;
         });
     }

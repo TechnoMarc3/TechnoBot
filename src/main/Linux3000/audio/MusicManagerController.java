@@ -30,7 +30,7 @@ public class MusicManagerController {
     }
 
     public void removeGuildFromCache(Guild guild) {
-        guildCache.remove(guild);
+        guildCache.remove(guild.getIdLong());
     }
 
     public void addChannelToGuild(Guild guild, TextChannel channel) {

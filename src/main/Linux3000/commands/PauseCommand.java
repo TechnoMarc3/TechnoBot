@@ -19,12 +19,12 @@ public class PauseCommand implements ServerCommand {
 
 
                 final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
-
+               musicManager.setOnCooldown(true);
                 musicManager.scheduler.getAudioPlayer().setPaused(true);
 
 
                 channel.sendMessage("Ich wurde pausiert, Musik zu spielen!").queue();
-                DiscordBot.INSTANCE.playerManager.getMusicManager(channel.getGuild()).changeCooldown();
+
 
             }
         }
