@@ -2,7 +2,7 @@ package main.Linux3000.commands;
 
 
 import main.Linux3000.DiscordBot;
-import main.Linux3000.audio.PlayerManager1;
+import main.Linux3000.audio.PlayerManager;
 import main.Linux3000.commands.types.ServerCommand;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -10,9 +10,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.awt.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 public class PlayCommand implements ServerCommand {
@@ -29,13 +26,13 @@ public class PlayCommand implements ServerCommand {
 					AudioManager manager = vc.getGuild().getAudioManager();
 					manager.openAudioConnection(vc);
 					DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(channel.getGuild());
-					DiscordBot.INSTANCE.getManagerController().addEntry(channel.getGuild(), PlayerManager1.getInstance().getMusicManager(channel.getGuild()));
+					DiscordBot.INSTANCE.getManagerController().addEntry(channel.getGuild(), PlayerManager.getInstance().getMusicManager(channel.getGuild()));
 
 
 
 
 					System.out.println(message.getAttachments().get(0).getUrl());
-					PlayerManager1.getInstance().loadAndPlay(channel, message.getAttachments().get(0).getUrl());
+					PlayerManager.getInstance().loadAndPlay(channel, message.getAttachments().get(0).getUrl());
 
 				}}}
 		if (args.length > 1) {
@@ -46,7 +43,7 @@ public class PlayCommand implements ServerCommand {
 					AudioManager manager = vc.getGuild().getAudioManager();
 					manager.openAudioConnection(vc);
 					DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(channel.getGuild());
-					DiscordBot.INSTANCE.getManagerController().addEntry(channel.getGuild(), PlayerManager1.getInstance().getMusicManager(channel.getGuild()));
+					DiscordBot.INSTANCE.getManagerController().addEntry(channel.getGuild(), PlayerManager.getInstance().getMusicManager(channel.getGuild()));
 
 
 					String link = String.join(" ",  message.getContentRaw().replace("!play ", ""));
@@ -60,7 +57,7 @@ public class PlayCommand implements ServerCommand {
 					if(DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(channel.getGuild()) == null) {
 						DiscordBot.INSTANCE.getManagerController().addChannelToGuild(manager.getGuild(), channel);
 					}
-			        PlayerManager1.getInstance().loadAndPlay(channel, link);
+			        PlayerManager.getInstance().loadAndPlay(channel, link);
 
 
 			    }else {

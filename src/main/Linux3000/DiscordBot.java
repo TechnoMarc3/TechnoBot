@@ -6,7 +6,6 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import main.Linux3000.audio.MusicManagerController;
 import main.Linux3000.audio.PlayerManager;
-import main.Linux3000.audio.PlayerManager1;
 import main.Linux3000.commands.types.CommandManager;
 import main.Linux3000.events.MemberLevelUpEvent;
 import main.Linux3000.listeners.JoinQuitListener;
@@ -43,7 +42,7 @@ public class DiscordBot {
     public PlayerManager playerManager;
     private CommandManager cmdMan;
     public AudioPlayerManager audioPlayerManager;
-    public PlayerManager1 playerManager1;
+
     private MusicManagerController managerController;
 
     //TODO: https://developers.google.com/youtube/v3/guides/push_notifications,  Callback, Netty
@@ -80,7 +79,6 @@ public class DiscordBot {
         builder.setStatus(OnlineStatus.ONLINE);
 
         this.audioPlayerManager = new DefaultAudioPlayerManager();
-        this.playerManager1 = new PlayerManager1();
         this.playerManager = new PlayerManager();
         this.managerController = new MusicManagerController();
         LiteSQL.createDataSource();

@@ -8,9 +8,8 @@ import core.GLA;
 import genius.SongSearch;
 import main.Linux3000.DiscordBot;
 import main.Linux3000.audio.GuildMusicManager;
-import main.Linux3000.audio.PlayerManager1;
+import main.Linux3000.audio.PlayerManager;
 import main.Linux3000.commands.types.ServerCommand;
-import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -28,7 +27,7 @@ public class LyricsCommand implements ServerCommand {
 
     @Override
     public void performCommand(Member m, TextChannel channel, Message message) {
-        final GuildMusicManager musicManager = PlayerManager1.getInstance().getMusicManager(channel.getGuild());
+        final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
         final AudioPlayer audioPlayer = musicManager.audioPlayer;
         final AudioTrack track = audioPlayer.getPlayingTrack();
 

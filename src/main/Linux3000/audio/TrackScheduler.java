@@ -206,8 +206,8 @@ public class TrackScheduler extends AudioEventAdapter {
     }
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-
-        System.out.println("ended succ");
+        Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(audioPlayer);
+        System.out.println("ended succ : " + track.getInfo().title + "  -> guild: " + guild.getName());
 
 
 
@@ -230,13 +230,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 }
                 else {
 
-                    Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(player);
-                    TextChannel channel = DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(guild);
-                    AudioManager manager = guild.getAudioManager();
-                    manager.closeAudioConnection();
-                    channel.sendMessage("Die Playlist ist nun leer :sob: . Deshalb habe ich mich disconnected! Du kannst mich aber wieder zurückholen, indem du !play <Titel, URL> eingibst ").queue();
-                    System.out.println("playlist empty");
-                    DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
+                    DiscordBot.INSTANCE.playerManager.getMusicManager(guild).changeCooldown();
                 }
             }
 

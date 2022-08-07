@@ -1,7 +1,7 @@
 package main.Linux3000.commands;
 
 import main.Linux3000.audio.GuildMusicManager;
-import main.Linux3000.audio.PlayerManager1;
+import main.Linux3000.audio.PlayerManager;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.*;
 
@@ -15,7 +15,7 @@ public class BassCommand implements ServerCommand {
             if ((vc = (VoiceChannel) state.getChannel()) != null) {
 
 
-                final GuildMusicManager musicManager = PlayerManager1.getInstance().getMusicManager(channel.getGuild());
+                final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
 
                 musicManager.scheduler.bassBoost(100);
 

@@ -6,11 +6,7 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 
-import javax.sound.sampled.*;
-import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class AudioPlayerSendHandler implements AudioSendHandler {
 

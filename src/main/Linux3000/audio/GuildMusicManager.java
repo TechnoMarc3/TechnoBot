@@ -2,9 +2,19 @@ package main.Linux3000.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import main.Linux3000.DiscordBot;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.managers.AudioManager;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GuildMusicManager {
 	 public final AudioPlayer audioPlayer;
+
+	 private boolean cooldown = false;
+	 private final Timer timer = new Timer();
 
 	    public final TrackScheduler scheduler;
 
@@ -24,6 +34,33 @@ public class GuildMusicManager {
 			playlist = new AudioPlaylist();
 		}
 		return playlist;
+	}
+
+	public void changeCooldown() {
+			cooldown = !cooldown;
+		System.out.println("changed cooldown to: " + cooldown);
+			if(cooldown) {
+				doLoop();
+			}
+			if(!cooldown) {
+				timer.cancel();
+			}
+	}
+
+	private void doLoop() {
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(audioPlayer);
+				TextChannel channel = DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(guild);
+				AudioManager manager = guild.getAudioManager();
+				manager.closeAudioConnection();
+				channel.sendMessage("Die letzen 5 Minuten wurde keine Musik abgespielt. Deshalb habe ich mich disconnected! Du kannst mich aber wieder zurückholen, indem du !play <Titel, URL> eingibst ").queue();
+				System.out.println("disconnected due inactivity : " + guild.getName());
+				DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
+			}
+		};
+		timer.schedule(task, 300000);
 	}
 
 	public AudioPlayerSendHandler getSendHandler() {

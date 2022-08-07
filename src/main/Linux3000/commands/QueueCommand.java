@@ -3,23 +3,21 @@ package main.Linux3000.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import main.Linux3000.audio.GuildMusicManager;
-import main.Linux3000.audio.PlayerManager1;
+import main.Linux3000.audio.PlayerManager;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 public class QueueCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		final GuildMusicManager musicManager = PlayerManager1.getInstance().getMusicManager(channel.getGuild());
+		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
        final List<AudioTrack> trackList = musicManager.getPlaylist().getAllTracks();
 
         if (trackList.isEmpty()) {
