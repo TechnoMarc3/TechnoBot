@@ -70,7 +70,7 @@ public class GuildMusicManager {
 						DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
 					}
 				};
-				timer.schedule(task, 10000);
+				timer.schedule(task, 300000);
 			});
 			thread.start();
 
