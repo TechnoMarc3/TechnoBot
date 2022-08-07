@@ -14,7 +14,8 @@ public class GuildMusicManager {
 	 public final AudioPlayer audioPlayer;
 
 	 private boolean cooldown = false;
-	 private final Timer timer = new Timer();
+	 TimerTask task;
+
 
 	    public final TrackScheduler scheduler;
 
@@ -43,11 +44,12 @@ public class GuildMusicManager {
 				doLoop();
 			}
 			if(!cooldown) {
-				timer.cancel();
+				task.cancel();
 			}
 	}
 
 	private void doLoop() {
+		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
