@@ -23,10 +23,13 @@ public class StopCommand implements ServerCommand {
 
 		        musicManager.scheduler.getAudioPlayer().stopTrack();
 		        musicManager.scheduler.clearPlaylist();
+				if(!musicManager.isPlayingMusic) {
+					channel.sendMessage("Ich spiele aktuell keine Musik, es gibt also auch nichts zu stoppen :blush:").queue();
+				}else {
 
 		        channel.sendMessage("Ich wurde gestoppt, Musik zu spielen. Deshalb habe ich auch die Playlist gelöscht!").queue();
 				musicManager.setPlayingMusic(false);
-				musicManager.setupTask();
+				musicManager.setupTask(); }
 
 		        
 			}
