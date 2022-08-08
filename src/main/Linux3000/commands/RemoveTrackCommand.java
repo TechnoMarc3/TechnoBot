@@ -19,7 +19,7 @@ public class RemoveTrackCommand implements ServerCommand {
 
                 final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
                 if(musicManager.scheduler.removeTrack(num-1)) {
-                    channel.sendMessage("Song: " + musicManager.scheduler.getPlaylist().get(num-2).getInfo().title + " erfolgreich aus der Playlist gelöscht").queue();
+                    channel.sendMessage("Song: " + musicManager.scheduler.getPlaylist().get(num-1).getInfo().title + " erfolgreich aus der Playlist gelöscht").queue();
                 }else {
                     channel.sendMessage("Diesen Song gibt es nicht in der Playlist").queue();
                 }
