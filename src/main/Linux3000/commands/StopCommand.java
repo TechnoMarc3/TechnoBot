@@ -25,7 +25,9 @@ public class StopCommand implements ServerCommand {
 		        musicManager.scheduler.clearPlaylist();
 
 		        channel.sendMessage("Ich wurde gestoppt, Musik zu spielen. Deshalb habe ich auch die Playlist gelöscht!").queue();
-				DiscordBot.INSTANCE.playerManager.getMusicManager(channel.getGuild()).setOnCooldown(true);
+				musicManager.setPlayingMusic(false);
+				musicManager.setupTask();
+
 		        
 			}
 		}

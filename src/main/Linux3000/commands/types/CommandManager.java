@@ -38,6 +38,7 @@ public class CommandManager {
 		addCommand(new UnBassCommand());
 		addCommand( new VolumeCommand());
 		addCommand(new KickCommand());
+		addCommand(new RemoveTrackCommand());
 		addCommand(new BanCommand());
 
 

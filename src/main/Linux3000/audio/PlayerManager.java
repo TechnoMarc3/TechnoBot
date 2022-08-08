@@ -40,7 +40,6 @@ public class PlayerManager {
 
             guild.getAudioManager().setSendingHandler(guildMusicManager.getSendHandler());
 
-            DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
             DiscordBot.INSTANCE.getManagerController().addEntry(guild, guildMusicManager);
 
             return guildMusicManager;
@@ -73,6 +72,8 @@ public class PlayerManager {
                         .queue();
 
                 musicManager.scheduler.startOrQueue(track);
+
+
 
 
             }
@@ -122,7 +123,7 @@ public class PlayerManager {
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                //
+                exception.printStackTrace();
 
             }
         });

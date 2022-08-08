@@ -50,7 +50,6 @@ public class TrackScheduler extends AudioEventAdapter {
 
 
     public void startOrQueue(AudioTrack track) {
-
         if (!audioPlayer.startTrack(track, true)) {
             this.manager.getPlaylist().addTrack(track);
         }else {
@@ -58,6 +57,7 @@ public class TrackScheduler extends AudioEventAdapter {
             this.currentTrack = track;
             hasAlreadyPlayed.add(track);
         }
+        manager.setPlayingMusic(true);
     }
 
 
@@ -72,7 +72,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(this.audioPlayer);
                 clearPlaylist();
                 this.audioPlayer.stopTrack();
-                DiscordBot.INSTANCE.playerManager.getMusicManager(guild).setOnCooldown(true);
+                manager.setPlayingMusic(false);
                 return false;
             }
         }else {
@@ -80,6 +80,7 @@ public class TrackScheduler extends AudioEventAdapter {
         this.audioPlayer.startTrack(hasAlreadyPlayedTrack(track) ? track.makeClone() : track, false);
         this.currentTrack = track;
         this.hasAlreadyPlayed.add(track);
+        manager.setPlayingMusic(true);
         return true; }
 
     }
@@ -127,6 +128,13 @@ public class TrackScheduler extends AudioEventAdapter {
         final long newPosition = NumberUtils.truncateBetween(track.getPosition() + time, 0, track.getDuration() - 1);
         track.setPosition(newPosition);
         return newPosition;
+    }
+
+    public boolean removeTrack(int index) {
+        try{
+        this.getPlaylist().remove(index);
+        return true;}
+        catch(Exception e) {return false;}
     }
 
     public void shufflePlaylist() {
@@ -205,6 +213,8 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(audioPlayer);
+        System.out.println(track.getInfo());
+        System.out.println(guild);
         System.out.println("ended succ : " + track.getInfo().title + "  -> guild: " + guild.getName());
 
 
@@ -228,7 +238,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 }
                 else {
 
-                    DiscordBot.INSTANCE.playerManager.getMusicManager(guild).setOnCooldown(true);
+                    DiscordBot.INSTANCE.playerManager.getMusicManager(guild).sendDisconnect();
                 }
             }
 

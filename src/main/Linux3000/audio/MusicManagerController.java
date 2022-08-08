@@ -10,27 +10,28 @@ import java.util.Map;
 
 public class MusicManagerController {
 
-    private Map<Long, GuildMusicManager> guildCache;
+    private Map<Guild, GuildMusicManager> guildCache;
     private HashMap<Guild, TextChannel> textChannels = new HashMap<>();
     public MusicManagerController() {
         guildCache = new HashMap<>();
     }
 
     public void addEntry(Guild guild, GuildMusicManager manager) {
-        guildCache.put(guild.getIdLong(), manager);
+        guildCache.put(guild, manager);
+        System.out.println(guildCache);
     }
 
     public Guild getGuildByPlayer(AudioPlayer player) {
-        for(Long id : guildCache.keySet()) {
-            if(guildCache.get(id).getAudioPlayer().equals(player)) {
-                return DiscordBot.INSTANCE.getJDA().getGuildById(id);
+        for(Guild guild : guildCache.keySet()) {
+            if(guildCache.get(guild).getAudioPlayer().equals(player)) {
+                return guild;
             }
         }
         return null;
     }
 
     public void removeGuildFromCache(Guild guild) {
-        guildCache.remove(guild.getIdLong());
+        guildCache.remove(guild);
     }
 
     public void addChannelToGuild(Guild guild, TextChannel channel) {

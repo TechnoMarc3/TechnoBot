@@ -19,7 +19,8 @@ public class PauseCommand implements ServerCommand {
 
 
                 final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
-               musicManager.setOnCooldown(true);
+               musicManager.setPlayingMusic(false);
+               musicManager.setupTask();
                 musicManager.scheduler.getAudioPlayer().setPaused(true);
 
 

@@ -2,6 +2,7 @@ package main.Linux3000.commands;
 
 
 import main.Linux3000.DiscordBot;
+import main.Linux3000.audio.GuildMusicManager;
 import main.Linux3000.audio.PlayerManager;
 import main.Linux3000.commands.types.ServerCommand;
 
@@ -25,10 +26,6 @@ public class PlayCommand implements ServerCommand {
 				if ((vc = (VoiceChannel) state.getChannel()) != null)  {
 					AudioManager manager = vc.getGuild().getAudioManager();
 					manager.openAudioConnection(vc);
-					DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(channel.getGuild());
-					DiscordBot.INSTANCE.getManagerController().addEntry(channel.getGuild(), PlayerManager.getInstance().getMusicManager(channel.getGuild()));
-
-
 
 
 					System.out.println(message.getAttachments().get(0).getUrl());
@@ -42,8 +39,8 @@ public class PlayCommand implements ServerCommand {
 				if ((vc = (VoiceChannel) state.getChannel()) != null)  {
 					AudioManager manager = vc.getGuild().getAudioManager();
 					manager.openAudioConnection(vc);
-					DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(channel.getGuild());
-					DiscordBot.INSTANCE.getManagerController().addEntry(channel.getGuild(), PlayerManager.getInstance().getMusicManager(channel.getGuild()));
+
+
 
 
 					String link = String.join(" ",  message.getContentRaw().replace("!play ", ""));
@@ -58,6 +55,7 @@ public class PlayCommand implements ServerCommand {
 						DiscordBot.INSTANCE.getManagerController().addChannelToGuild(manager.getGuild(), channel);
 					}
 			        PlayerManager.getInstance().loadAndPlay(channel, link);
+					System.out.println("load and play" );
 
 
 			    }else {

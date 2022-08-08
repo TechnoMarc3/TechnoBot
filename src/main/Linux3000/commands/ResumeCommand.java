@@ -20,7 +20,7 @@ public class ResumeCommand implements ServerCommand {
 						.getMusicManager(channel.getGuild());
 
 				if (musicManager.scheduler.getAudioPlayer().isPaused()) {
-					musicManager.setOnCooldown(false);
+					musicManager.setPlayingMusic(true);
 					musicManager.scheduler.getAudioPlayer().setPaused(false);
 
 					channel.sendMessage("Ich spiele nun weiter Musik für dich ab! :thumbsup:").queue();
