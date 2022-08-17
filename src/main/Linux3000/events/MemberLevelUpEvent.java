@@ -25,7 +25,7 @@ public class MemberLevelUpEvent{
     }
 
     public  TextChannel getLevelUpChannel(Guild guild) {
-        TextChannel channel = guild.getDefaultChannel();
+        TextChannel channel = (TextChannel) guild.getDefaultChannel();
 
             return channel;
     }

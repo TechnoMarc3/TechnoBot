@@ -1,7 +1,15 @@
 package main.Linux3000.manage;
 
 
+import main.Linux3000.audio.premium.PremiumPlayerManager;
+import main.Linux3000.audio.premium.PremiumPlaylist;
+import main.Linux3000.audio.premium.PremiumPlaylistManager;
+import net.dv8tion.jda.api.entities.Guild;
+
 import java.sql.*;
+import java.util.Arrays;
+
+import static main.Linux3000.manage.LiteSQL.getConnection;
 
 
 public class SQLManager {
@@ -10,10 +18,11 @@ public class SQLManager {
 
 		Connection connection = null;
 		try {
-			connection = LiteSQL.getConnection();
+			connection = getConnection();
 			Statement stmt = connection.createStatement();
 			stmt.execute("CREATE TABLE IF NOT EXISTS expsystem(guildid BIGINT, memberid BIGINT, xp INTEGER)");
 			stmt.execute("CREATE TABLE IF NOT EXISTS guilds(guildid BIGINT, premium TEXT DEFAULT 'false')");
+			stmt.execute("CREATE TABLE IF NOT EXISTS playlists(guildid BIGINT, url TEXT, name TEXT )");
 			stmt.execute("CREATE TABLE IF NOT EXISTS level_stats(guildid BIGINT, countdown INTEGER, level_up_channel VARCHAR(256))");
 			stmt.execute("CREATE TABLE IF NOT EXISTS level_roles(guildid BIGINT, role_id INTEGER, level INTEGER)");
 			stmt.execute("CREATE TABLE IF NOT EXISTS level(guildid BIGINT, level INTEGER, xp INTEGER)");
@@ -32,7 +41,7 @@ public class SQLManager {
 	}
 
 	public static void setupGuilds(long guildid) throws SQLException {
-		Connection connection = LiteSQL.getConnection();
+		Connection connection = getConnection();
 		Statement statement = connection.createStatement();
 		ResultSet set = statement.executeQuery("SELECT * FROM guilds WHERE guildid = "+ guildid);
 		System.out.println(set);
@@ -41,6 +50,45 @@ public class SQLManager {
 		}
 			statement.close();
 		connection.close();
+
+	}
+
+	public static void savePlaylist(Guild guild, PremiumPlaylist playlist) throws SQLException {
+		Connection connection = getConnection();
+		Statement statement = connection.createStatement();
+		String g = "INSERT INTO playlists(guildid,url,name) VALUES (" + guild.getIdLong() + ",\"" + playlist.toString() + "\"," + "\"" + playlist.getName() + "\")";
+		System.out.println(g);
+		statement.execute(g);
+		statement.close();
+		connection.close();
+	}
+
+	public static void loadPlaylists(Guild guild) throws SQLException {
+		Connection connection = getConnection();
+		Statement stmt = connection.createStatement();
+
+		ResultSet nameSet = stmt.executeQuery("SELECT name FROM playlists WHERE guildid = "+ guild.getIdLong());
+		String url = "";
+		String name = "";
+		if(nameSet.next()) {
+			name = nameSet.getString(1);
+			name = name.replace("\"", "");
+		}
+		stmt.close();
+		stmt = connection.createStatement();
+		ResultSet urls = stmt.executeQuery("SELECT url FROM playlists WHERE guildid = "+ guild.getIdLong());
+		if(urls.next()) {
+			url = urls.getString(1);
+			url = url.replace("\"", "");
+		}
+
+		if(!url.equalsIgnoreCase("") || !name.equalsIgnoreCase("")) {
+			String[] uris = url.split(",");
+			PremiumPlayerManager.getInstance().loadUrisAndCreatePlaylist(guild, uris, name);
+		}
+		stmt.close();
+		connection.close();
+
 
 	}
 
@@ -75,7 +123,6 @@ public class SQLManager {
 			else {
 				return null;
 			}
-
 
 
 	}

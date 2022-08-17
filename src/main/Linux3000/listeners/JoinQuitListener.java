@@ -3,10 +3,11 @@ package main.Linux3000.listeners;
 import main.Linux3000.DiscordBot;
 import main.Linux3000.manage.SQLManager;
 import main.Linux3000.stats.xp.image.ImageCreator;
-import main.Linux3000.youtube.YoutubeSearchResulter;
+
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
@@ -18,12 +19,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class JoinQuitListener extends ListenerAdapter {
-    YoutubeSearchResulter resulter;
+
     ImageCreator creator = new ImageCreator();
     String channelID;
     String discord_channel_id;
-  //  @Override
-  //  public void onReady(ReadyEvent event) {
+ @Override
+public void onReady(ReadyEvent event) {
 
 //        for(Guild guild: event.getJDA().getGuilds()) {
   //          try {
@@ -59,7 +60,22 @@ public class JoinQuitListener extends ListenerAdapter {
    //     };
    //     timer.scheduleAtFixedRate(task, 300000,300000);
 //
-   // }
+    DiscordBot.INSTANCE.getPremiumManager().registerPremium(DiscordBot.INSTANCE.getJDA().getGuildById(868798821092696084L));
+    DiscordBot.INSTANCE.getPremiumManager().registerPremium(DiscordBot.INSTANCE.getJDA().getGuildById(967773208981930054L));
+     DiscordBot.INSTANCE.getPremiumManager().registerPremium(DiscordBot.INSTANCE.getJDA().getGuildById(1008000645762121781L));
+
+     DiscordBot.INSTANCE.getPremiumManager().getPremiumGuilds().forEach(guild -> {
+         try {
+             SQLManager.loadPlaylists(guild);
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+     });
+
+
+
+
+   }
 //
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -82,7 +98,7 @@ public class JoinQuitListener extends ListenerAdapter {
 
         TextChannel channel;
        creator.createJoinImage(event.getGuild(), event.getMember());
-        if((channel = event.getGuild().getDefaultChannel()) != null) {
+        if((channel = (TextChannel) event.getGuild().getDefaultChannel()) != null) {
             Timer timer = new Timer();
             TimerTask task = new TimerTask() {
                 @Override

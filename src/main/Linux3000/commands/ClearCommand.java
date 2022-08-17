@@ -2,6 +2,7 @@ package main.Linux3000.commands;
 
 
 
+import main.Linux3000.commands.types.BaseCommand;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ClearCommand implements ServerCommand {
+public class ClearCommand implements BaseCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {

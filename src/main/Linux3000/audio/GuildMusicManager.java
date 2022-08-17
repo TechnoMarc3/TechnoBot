@@ -14,6 +14,7 @@ public class GuildMusicManager {
 	 public final AudioPlayer audioPlayer;
 
 		public boolean isPlayingMusic;
+		public boolean isTerminated;
 
 
 
@@ -28,12 +29,10 @@ public class GuildMusicManager {
 	        this.scheduler = new TrackScheduler(this.audioPlayer, 30, this);
 	        this.audioPlayer.addListener(this.scheduler);
 	        this.sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+			this.playlist = new AudioPlaylist();
 	    }
 
 	public AudioPlaylist getPlaylist() {
-		if(playlist == null) {
-			playlist = new AudioPlaylist();
-		}
 		return playlist;
 	}
 
@@ -43,6 +42,13 @@ public class GuildMusicManager {
 
 	public void setPlayingMusic(boolean playingMusic) {
 		isPlayingMusic = playingMusic;
+		if(isPlayingMusic) {
+			isTerminated = false;
+		}
+	}
+
+	public void setPlaylist(AudioPlaylist playlist) {
+		this.playlist = playlist;
 	}
 
 	public void setupTask() {
@@ -67,6 +73,9 @@ public class GuildMusicManager {
 		manager.closeAudioConnection();
 		channel.sendMessage("Die letzen 5 Minuten wurde keine Musik abgespielt. Deshalb habe ich mich disconnected! Du kannst mich aber wieder zurückholen, indem du !play <Titel, URL> eingibst ").queue();
 		System.out.println("disconnected due inactivity : " + guild.getName());
+		DiscordBot.INSTANCE.getManagerController().removeGuildFromCache(guild);
+		PlayerManager.getInstance().removeMusicManager(guild);
+		isTerminated = true;
 	}
 
 	public AudioPlayerSendHandler getSendHandler() {

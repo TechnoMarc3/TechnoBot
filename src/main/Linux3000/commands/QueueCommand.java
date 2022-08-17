@@ -2,8 +2,11 @@ package main.Linux3000.commands;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import main.Linux3000.DiscordBot;
 import main.Linux3000.audio.GuildMusicManager;
 import main.Linux3000.audio.PlayerManager;
+import main.Linux3000.audio.premium.PremiumPlayerManager;
+import main.Linux3000.commands.types.AudioCommand;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -12,13 +15,19 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
 import java.util.List;
 
-public class QueueCommand implements ServerCommand {
+public class QueueCommand implements AudioCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
-		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
-       final List<AudioTrack> trackList = musicManager.getPlaylist().getAllTracks();
+        final GuildMusicManager musicManager;
+        if(DiscordBot.INSTANCE.getPremiumManager().hasPremium(channel.getGuild())) {
+            musicManager = PremiumPlayerManager.getInstance().getMusicManager(channel.getGuild());
+        }else {
+            musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
+        }
+
+        final List<AudioTrack> trackList = musicManager.getPlaylist().getAllTracks();
 
         if (trackList.isEmpty()) {
             channel.sendMessage("Die Playlist ist leer :sob:").queue();

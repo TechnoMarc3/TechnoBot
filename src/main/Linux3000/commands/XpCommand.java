@@ -1,6 +1,7 @@
 package main.Linux3000.commands;
 
 import main.Linux3000.DiscordBot;
+import main.Linux3000.commands.types.BaseCommand;
 import main.Linux3000.commands.types.ServerCommand;
 import main.Linux3000.stats.xp.XP;
 
@@ -9,7 +10,7 @@ import net.dv8tion.jda.api.entities.*;
 import javax.annotation.Nullable;
 
 
-public class XpCommand implements ServerCommand {
+public class XpCommand implements BaseCommand {
 
     @Override
     public void performCommand(Member m, TextChannel channel, Message message) {

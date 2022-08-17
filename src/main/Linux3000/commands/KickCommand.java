@@ -1,5 +1,6 @@
 package main.Linux3000.commands;
 
+import main.Linux3000.commands.types.BaseCommand;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -7,7 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-public class KickCommand implements ServerCommand {
+public class KickCommand implements BaseCommand {
     @Override
     public void performCommand(Member m, TextChannel channel, Message message) throws InterruptedException {
         if(!m.hasPermission(Permission.ADMINISTRATOR)) {
@@ -16,7 +17,7 @@ public class KickCommand implements ServerCommand {
         Guild g = channel.getGuild();
 
         String[] args = message.getContentRaw().split(" ");
-        Member member = message.getMentionedMembers().get(0);
+        Member member = message.getMentions().getMembers().get(0);
         if(member == null) {
             return;
         }

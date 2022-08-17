@@ -8,10 +8,30 @@ import java.util.List;
 
 public class AudioPlaylist {
 
-    private List<AudioTrack> audioTracks = new ArrayList<>();
+    private String name;
+
+    private List<AudioTrack> audioTracks;
+
+    public AudioPlaylist() {
+        audioTracks = new ArrayList<>();
+    }
+
+    public AudioPlaylist(String name, List<AudioTrack> audioTracks) {
+        this.name = name;
+        this.audioTracks = audioTracks;
+
+        System.out.println(audioTracks.size());
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
 
     public void addTrack(AudioTrack track) {
-        audioTracks.add(track);
+    audioTracks.add(track);
     }
 
     public void removeTrack(AudioTrack track) {
@@ -22,7 +42,11 @@ public class AudioPlaylist {
         this.audioTracks = audioTracks;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<AudioTrack> getAllTracks() {
-        return audioTracks;
+        return this.audioTracks;
     }
 }

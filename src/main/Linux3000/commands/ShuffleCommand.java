@@ -1,11 +1,14 @@
 package main.Linux3000.commands;
 
+import main.Linux3000.DiscordBot;
 import main.Linux3000.audio.GuildMusicManager;
 import main.Linux3000.audio.PlayerManager;
+import main.Linux3000.audio.premium.PremiumPlayerManager;
+import main.Linux3000.commands.types.AudioCommand;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.*;
 
-public class ShuffleCommand implements ServerCommand {
+public class ShuffleCommand implements AudioCommand {
     @Override
     public void performCommand(Member m, TextChannel channel, Message message) throws InterruptedException {
 
@@ -15,8 +18,12 @@ public class ShuffleCommand implements ServerCommand {
             if ((vc = (VoiceChannel) state.getChannel()) != null) {
 
 
-                final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
-
+                final GuildMusicManager musicManager;
+                if(DiscordBot.INSTANCE.getPremiumManager().hasPremium(channel.getGuild())) {
+                    musicManager = PremiumPlayerManager.getInstance().getMusicManager(channel.getGuild());
+                }else {
+                    musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
+                }
                 musicManager.scheduler.shufflePlaylist();
 
 

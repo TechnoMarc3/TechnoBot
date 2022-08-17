@@ -4,6 +4,8 @@ package main.Linux3000.commands;
 import main.Linux3000.DiscordBot;
 import main.Linux3000.audio.GuildMusicManager;
 import main.Linux3000.audio.PlayerManager;
+import main.Linux3000.audio.premium.PremiumPlayerManager;
+import main.Linux3000.commands.types.AudioCommand;
 import main.Linux3000.commands.types.ServerCommand;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -13,12 +15,13 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import java.awt.*;
 import java.net.URL;
 
-public class PlayCommand implements ServerCommand {
+public class PlayCommand implements AudioCommand {
 
 	@Override
 	public void performCommand(Member m, TextChannel channel, Message message) {
 
 		String[] args = message.getContentRaw().split(" ");
+
 		if(args.length == 0) {
 			GuildVoiceState state;
 			if ((state = m.getVoiceState()) != null) {
@@ -29,7 +32,14 @@ public class PlayCommand implements ServerCommand {
 
 
 					System.out.println(message.getAttachments().get(0).getUrl());
-					PlayerManager.getInstance().loadAndPlay(channel, message.getAttachments().get(0).getUrl());
+
+					if(DiscordBot.INSTANCE.getPremiumManager().hasPremium(channel.getGuild())) {
+						PremiumPlayerManager.getInstance().loadAndPlay(channel, message.getAttachments().get(0).getUrl());
+					}else {
+						PlayerManager.getInstance().loadAndPlay(channel, message.getAttachments().get(0).getUrl());
+					}
+
+
 
 				}}}
 		if (args.length > 1) {
@@ -54,7 +64,12 @@ public class PlayCommand implements ServerCommand {
 					if(DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(channel.getGuild()) == null) {
 						DiscordBot.INSTANCE.getManagerController().addChannelToGuild(manager.getGuild(), channel);
 					}
-			        PlayerManager.getInstance().loadAndPlay(channel, link);
+
+					if(DiscordBot.INSTANCE.getPremiumManager().hasPremium(channel.getGuild())) {
+						PremiumPlayerManager.getInstance().loadAndPlay(channel, link);
+					}else {
+						PlayerManager.getInstance().loadAndPlay(channel, link);
+					}
 					System.out.println("load and play" );
 
 

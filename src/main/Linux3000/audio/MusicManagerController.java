@@ -18,7 +18,6 @@ public class MusicManagerController {
 
     public void addEntry(Guild guild, GuildMusicManager manager) {
         guildCache.put(guild, manager);
-        System.out.println(guildCache);
     }
 
     public Guild getGuildByPlayer(AudioPlayer player) {

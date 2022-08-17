@@ -7,10 +7,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackState;
 import main.Linux3000.DiscordBot;
-import main.Linux3000.utils.NumberUtils;
+import main.Linux3000.audio.premium.PremiumPlaylist;
+import main.Linux3000.premium.manager.MusicCommandManager;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.entities.Message;
 
 
 import javax.annotation.Nullable;
@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public class TrackScheduler extends AudioEventAdapter {
-    private static final float[] BASS_BOOST = {-0.05f, 0.07f, 0.16f, 0.03f, -0.05f, -0.11f};
+    private static final float[] BASS_BOOST = {0.5f, 0.12f, 0.4f, 0.00f, -0.05f, -0.11f};
 
     public enum RepeatMode {
         NONE,
@@ -34,6 +34,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
 
     private List<AudioTrack> hasAlreadyPlayed = new ArrayList<>();
+    private boolean isBassBoosted;
     private RepeatMode repeatMode;
     private AudioTrack currentTrack;
     private EqualizerFactory equalizer;
@@ -48,31 +49,50 @@ public class TrackScheduler extends AudioEventAdapter {
         this.manager = manager;
     }
 
+    public void registerAndStartPlaylist(PremiumPlaylist playlist) {
+        System.out.println("set");
+        this.audioPlayer.stopTrack();
+        System.out.println("stopped");
+        for(AudioTrack track : playlist.getTracks()) {
+            this.startOrQueue(track, false);
+        }
+        System.out.println("added");
+    }
 
-    public void startOrQueue(AudioTrack track) {
-        if (!audioPlayer.startTrack(track, true)) {
+
+    public void startOrQueue(AudioTrack track, boolean isFromPlaylist) {
+        System.out.println("start or queue");
+
+
+        if (!audioPlayer.startTrack(hasAlreadyPlayedTrack(track) ? track.makeClone() : track, true)) {
             this.manager.getPlaylist().addTrack(track);
         }else {
             this.manager.getPlaylist().addTrack(track);
             this.currentTrack = track;
-            hasAlreadyPlayed.add(track);
-        }
+            hasAlreadyPlayed.add(track); }
+
         manager.setPlayingMusic(true);
+
+
+
+
     }
 
 
 
     public boolean nextTrack() {
         int index = getPlaylist().indexOf(this.currentTrack);
+        this.audioPlayer.stopTrack();
+        this.audioPlayer.setPaused(false);
         if(index == getPlaylist().size()-1) {
             if(this.repeatMode.equals(RepeatMode.PLAYLIST)) {
                 this.skipTo(0);
                 return true;
             }else {
-                Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(this.audioPlayer);
                 clearPlaylist();
                 this.audioPlayer.stopTrack();
                 manager.setPlayingMusic(false);
+                manager.setupTask();
                 return false;
             }
         }else {
@@ -84,6 +104,31 @@ public class TrackScheduler extends AudioEventAdapter {
         return true; }
 
     }
+
+    public boolean previousTrack() {
+        int index = getPlaylist().indexOf(this.currentTrack);
+        this.audioPlayer.stopTrack();
+        this.audioPlayer.setPaused(false);
+        if(index == 0) {
+            if(this.repeatMode.equals(RepeatMode.PLAYLIST)) {
+                this.skipTo(getPlaylist().size()-1);
+                return true;
+            }else {
+                clearPlaylist();
+                this.audioPlayer.stopTrack();
+                manager.setPlayingMusic(false);
+                manager.setupTask();
+                return false;
+            }
+        }else {
+            AudioTrack track = this.manager.getPlaylist().getAllTracks().get(this.manager.getPlaylist().getAllTracks().indexOf(this.currentTrack)-1);
+            this.audioPlayer.startTrack(hasAlreadyPlayedTrack(track) ? track.makeClone() : track, false);
+            this.currentTrack = track;
+            this.hasAlreadyPlayed.add(track);
+            manager.setPlayingMusic(true);
+            return true; }
+    }
+
     public boolean hasAlreadyPlayedTrack(AudioTrack track) {
         return hasAlreadyPlayed.contains(track);
     }
@@ -111,11 +156,14 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public boolean skipTo(int num) {
-        AudioTrack track = null;
+        AudioTrack track;
         try {
         track = manager.getPlaylist().getAllTracks().get(num);
+        this.audioPlayer.stopTrack();
         this.audioPlayer.playTrack(this.makeClone(track));
+        this.audioPlayer.setPaused(false);
         this.currentTrack = track;
+        this.manager.setPlayingMusic(true);
         return true;
         }
         catch (IndexOutOfBoundsException exception) {
@@ -123,28 +171,42 @@ public class TrackScheduler extends AudioEventAdapter {
 
     }
 
-    public long changePosition(long time) {
-        final AudioTrack track = this.audioPlayer.getPlayingTrack();
-        final long newPosition = NumberUtils.truncateBetween(track.getPosition() + time, 0, track.getDuration() - 1);
-        track.setPosition(newPosition);
-        return newPosition;
-    }
 
-    public boolean removeTrack(int index) {
-        try{
-        this.getPlaylist().remove(index);
-        return true;}
-        catch(Exception e) {return false;}
-    }
 
     public void shufflePlaylist() {
-
         Collections.shuffle(this.manager.getPlaylist().getAllTracks());
-
     }
 
     public void clearPlaylist() {
         this.manager.getPlaylist().getAllTracks().clear();
+    }
+    private boolean hasDonePrevious;
+    // in seconds
+    public void changePosition(long time) {
+        final AudioTrack track = this.audioPlayer.getPlayingTrack();
+        final long newPosition = track.getPosition() + (time*1000);
+        if(newPosition >= track.getDuration()) {
+            nextTrack();
+            return;
+        }else if(newPosition < 0) {
+            if(hasDonePrevious) {
+                previousTrack();
+                hasDonePrevious = false;
+                return;
+            }
+            track.setPosition(0);
+            hasDonePrevious = true;
+            return;
+        }
+        track.setPosition(newPosition);
+
+    }
+
+    public boolean removeTrack(int index) {
+        try{
+            this.getPlaylist().remove(index);
+            return true;}
+        catch(Exception e) {return false;}
     }
 
     public void bassBoost(int percentage) {
@@ -154,6 +216,7 @@ public class TrackScheduler extends AudioEventAdapter {
         // Disable filter factory
         if (previousPercentage > 0 && percentage == 0) {
             this.audioPlayer.setFilterFactory(null);
+            isBassBoosted = false;
             return;
         }
         // Enable filter factory
@@ -170,6 +233,7 @@ public class TrackScheduler extends AudioEventAdapter {
         }
 
         this.boostPercentage = percentage;
+        isBassBoosted = true;
     }
 
     public void destroy() {
@@ -212,6 +276,9 @@ public class TrackScheduler extends AudioEventAdapter {
     }
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+
+        System.out.println(endReason.name());
+
         Guild guild = DiscordBot.INSTANCE.getManagerController().getGuildByPlayer(audioPlayer);
         System.out.println(track.getInfo());
         System.out.println(guild);
@@ -225,33 +292,41 @@ public class TrackScheduler extends AudioEventAdapter {
                 this.audioPlayer.startTrack(track.makeClone(), false);
                 return;
             }
-
-            if (!this.getPlaylist().get(this.getPlaylist().size()-1).equals(this.getCurrentTrack())) {
-                nextTrack();
-
-
-            } else {
-
-                if(this.getRepeatMode().equals(RepeatMode.PLAYLIST)) {
-                    this.skipTo(0);
-
-                }
-                else {
-
-                    DiscordBot.INSTANCE.playerManager.getMusicManager(guild).sendDisconnect();
-                }
-            }
+            nextTrack();
 
 
         }
+
+        if(DiscordBot.INSTANCE.getPremiumManager().hasPremium(guild)) {
+            MusicCommandManager commandManager = DiscordBot.INSTANCE.getPremiumManager().getCommandManager(guild);
+            Message message = commandManager.getMessage();
+            if(message != null) {
+                commandManager.destroy();
+                commandManager.setMessage(null);
+                message.delete().queue();
+                commandManager.sendMusicMessage(DiscordBot.INSTANCE.getManagerController().getSpecifiedTextChannel(guild));
+            }
+        }
+
+
+
+
+
+
+
     }
 
     public List<AudioTrack> getPlaylist() {
         return this.manager.getPlaylist().getAllTracks();
     }
 
+
     public AudioTrack getCurrentTrack() {
         return currentTrack;
+    }
+
+    public boolean isBassBoosted() {
+        return isBassBoosted;
     }
 }
 

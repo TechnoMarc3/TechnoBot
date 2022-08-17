@@ -1,12 +1,15 @@
 package main.Linux3000.commands;
 
 
+import main.Linux3000.DiscordBot;
 import main.Linux3000.audio.GuildMusicManager;
 import main.Linux3000.audio.PlayerManager;
+import main.Linux3000.audio.premium.PremiumPlayerManager;
+import main.Linux3000.commands.types.AudioCommand;
 import main.Linux3000.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.*;
 
-public class RemoveTrackCommand implements ServerCommand {
+public class RemoveTrackCommand implements AudioCommand {
     @Override
     public void performCommand(Member m, TextChannel channel, Message message) throws InterruptedException {
         String[] split = message.getContentRaw().split(" ");
@@ -17,7 +20,12 @@ public class RemoveTrackCommand implements ServerCommand {
             if ((vc = (VoiceChannel) state.getChannel()) != null) {
 
 
-                final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
+                final GuildMusicManager musicManager;
+                if(DiscordBot.INSTANCE.getPremiumManager().hasPremium(channel.getGuild())) {
+                    musicManager = PremiumPlayerManager.getInstance().getMusicManager(channel.getGuild());
+                }else {
+                    musicManager = PlayerManager.getInstance().getMusicManager(channel.getGuild());
+                }
                 if(musicManager.scheduler.removeTrack(num-1)) {
                     channel.sendMessage("Song: " + musicManager.scheduler.getPlaylist().get(num-2).getInfo().title + " erfolgreich aus der Playlist gelöscht").queue();
                 }else {
