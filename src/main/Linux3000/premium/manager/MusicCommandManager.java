@@ -79,6 +79,7 @@ public class MusicCommandManager extends PremiumFeature{
     public void editMessage(TextChannel channel) {
         final GuildMusicManager musicManager = PremiumPlayerManager.getInstance().getMusicManager(channel.getGuild());
         rows.clear();
+        SelectMenu playlistMenu = createPlaylistMenu(musicManager, channel.getGuild());
         if(!musicManager.getPlaylist().getAllTracks().isEmpty()) {
             rows.add(ActionRow.of(Button.primary("previous_track", Emoji.fromUnicode("⏮")),
                     Button.secondary("rewind", Emoji.fromUnicode("⏪")),
@@ -86,13 +87,13 @@ public class MusicCommandManager extends PremiumFeature{
                     Button.secondary("forward", Emoji.fromUnicode("⏩")),
                     Button.primary("next_track" , Emoji.fromUnicode("⏭"))));
             rows.add(ActionRow.of(createSelectionMenu(musicManager))); }
+
         if(!musicManager.getPlaylist().getAllTracks().isEmpty()) {
             if(musicManager.getPlaylist().getAllTracks().size() == 1) {
                 rows.add(ActionRow.of(Button.secondary("search_track", Emoji.fromUnicode("\uD83D\uDD0D")),
                         Button.danger("bass_boost", Emoji.fromUnicode("\uD83E\uDD18")),
                         Button.secondary("loop_track", Emoji.fromUnicode("\uD83D\uDD02"))
                 ));
-                rows.add(ActionRow.of(createPlaylistMenu(musicManager, channel.getGuild())));
 
             }else {
                 rows.add(ActionRow.of(Button.secondary("search_track", Emoji.fromUnicode("\uD83D\uDD0D")),
@@ -102,14 +103,17 @@ public class MusicCommandManager extends PremiumFeature{
                         Button.primary("shuffle", Emoji.fromUnicode("\uD83D\uDD00"))
                 ));
                 rows.add(ActionRow.of(Button.primary("register_playlist", Emoji.fromUnicode("\uD83D\uDCBE"))));
-                rows.add(ActionRow.of(createPlaylistMenu(musicManager, channel.getGuild())));
-            }}else {
+            }
+        }else {
             rows.add(ActionRow.of(Button.secondary("search_track", Emoji.fromUnicode("\uD83D\uDD0D")),
                     Button.danger("bass_boost", Emoji.fromUnicode("\uD83E\uDD18"))));
-            rows.add(ActionRow.of(createPlaylistMenu(musicManager, channel.getGuild())));
+
+        }
+        if(playlistMenu != null) {
+            rows.add(ActionRow.of(playlistMenu));
         }
 
-            message.editMessageEmbeds(createEmbed(channel)).setActionRows(rows)
+        message.editMessageEmbeds(createEmbed(channel)).setActionRows(rows)
                     .queue();
 
 

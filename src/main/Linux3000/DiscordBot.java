@@ -78,7 +78,7 @@ public class DiscordBot {
         }
 
 
-        JDABuilder builder = JDABuilder.createDefault(System.getenv("TOKEN"));
+        JDABuilder builder = JDABuilder.createDefault("Nzg2NTkzNjUyMzAxMzY1MjQ5.GF9Uz5.X44riumy3Ic6gzSF0q1vZj6HPR7uw-URSZpFrE");
         this.creator = new ImageCreator();
         builder.enableIntents(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
