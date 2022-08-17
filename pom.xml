@@ -90,7 +90,9 @@
                 <url>https://jitpack.io</url>
             </repository>
 
-            <repository>
+
+
+        <repository>
                 <id>dv8tion</id>
                 <name>m2-dv8tion</name>
                 <url>https://m2.dv8tion.net/releases</url>
@@ -103,20 +105,15 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-alpha.4</version>
+            <version>5.0.0-alpha.17</version>
         </dependency>
 
 
-        <dependency>
-            <groupId>com.github.LowLevelSubmarine</groupId>
-            <artifactId>GeniusLyricsAPI</artifactId>
-            <version>f7f35d1165</version>
-        </dependency>
 
         <dependency>
             <groupId>com.github.walkyst</groupId>
             <artifactId>lavaplayer-fork</artifactId>
-            <version>1.3.98.2</version>
+            <version>1.3.98.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
         <dependency>
@@ -131,14 +128,24 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-
-
         <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.TechnoMarc3</groupId>
+            <artifactId>Youtube4J</artifactId>
+            <version>v1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.LowLevelSubmarine</groupId>
+            <artifactId>GeniusLyricsAPI</artifactId>
+            <version>f7f35d1165</version>
+        </dependency>
+
+
 
 
 
