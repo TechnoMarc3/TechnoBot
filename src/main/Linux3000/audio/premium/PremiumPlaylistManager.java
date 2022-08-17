@@ -49,6 +49,9 @@ public class PremiumPlaylistManager extends PremiumFeature {
 
     public PlaylistReason check(Guild guild, List<AudioTrack> tracks) {
         List<PremiumPlaylist> playlists = PremiumPlaylist.getPlaylists(guild);
+        if(playlists == null) {
+            return PlaylistReason.FINE;
+        }
         if(playlists.size() == 5) {
             return PlaylistReason.FULL;
         }
